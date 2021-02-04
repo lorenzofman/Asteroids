@@ -18,6 +18,5 @@ internal class AsteroidCollision : MonoBehaviour
             return;
         }
         asteroid.Subdivide();
-        Destroy(projectile.gameObject);
     }
 }
