@@ -38,8 +38,8 @@ public readonly struct Asteroid
 
         gameObject.transform.position = spawner.Position();
         Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
-        rb.angularVelocity = 0.0f;
-        rb.velocity = Vector2.zero;
+        AsteroidUtils.ApplyImpulse(rb);
+        
         
         if (health <= 0)
         {
@@ -52,8 +52,7 @@ public readonly struct Asteroid
 
     private void AddComponents()
     {
-        /* Random impulse */
-        gameObject.GetComponent<Rigidbody2D>().AddForce(Random.insideUnitCircle, ForceMode2D.Impulse);
+        AsteroidUtils.ApplyImpulse(gameObject.GetComponent<Rigidbody2D>());
         
         /* Collision Notification */
         AsteroidCollision collision = gameObject.AddComponent<AsteroidCollision>();

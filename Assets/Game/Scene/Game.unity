@@ -309,7 +309,7 @@ MonoBehaviour:
   enemyCount: 0
   spawnRadius: 100
   spawnOffset: 50
-  asteroidsCount: 50
+  asteroidsCount: 400
 --- !u!114 &148607211
 MonoBehaviour:
   m_ObjectHideFlags: 0

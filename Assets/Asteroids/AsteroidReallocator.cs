@@ -39,9 +39,7 @@ namespace Asteroids
             if (spawner.OutOfRange(asteroid.position))
             {
                 asteroid.position = spawner.Position();
-                Rigidbody2D rb = asteroid.gameObject.GetComponent<Rigidbody2D>();
-                rb.velocity = Vector2.zero;
-                rb.angularVelocity = 0.0f;
+                AsteroidUtils.ApplyImpulse(asteroid.gameObject.GetComponent<Rigidbody2D>());
             }
             
             turn = FrameInterval;
