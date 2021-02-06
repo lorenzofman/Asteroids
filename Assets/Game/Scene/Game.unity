@@ -306,7 +306,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 9115338350250413045, guid: 8264d3d17e678334db70357785260444, type: 3}
   leftKeyCode: 276
   rightKeyCode: 275
-  enemyCount: 0
+  enemyCount: 50
   spawnRadius: 100
   spawnOffset: 50
   asteroidsCount: 400

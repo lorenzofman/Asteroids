@@ -24,7 +24,7 @@ public class GameController : MonoBehaviour
 
         for (int i = 0; i < enemyCount; i++)
         {
-            CreateEnemy(spawner);
+            CreateEnemy(spawner, player.transform);
         }
 
         for (int i = 0; i < asteroidsCount; i++)
@@ -61,11 +61,11 @@ public class GameController : MonoBehaviour
         return go;
     }
 
-    private static void CreateEnemy(IPositionSpawner spawner)
+    private static void CreateEnemy(IPositionSpawner spawner, Transform player)
     {
         GameObject enemy = CreateShip("Enemy");
         enemy.transform.position = spawner.Position();
-        SystemManager.RegisterSystem(new EnemyDirectionController(enemy.transform));
+        SystemManager.RegisterSystem(new EnemyDirectionController(enemy.transform, player));
         SystemManager.RegisterSystem(new ShipController(enemy.transform));
     }
 }
