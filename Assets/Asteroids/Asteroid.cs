@@ -1,3 +1,4 @@
+using Systems;
 using Asteroids;
 using Unity.Collections;
 using UnityEngine;
@@ -59,7 +60,7 @@ public readonly struct Asteroid
         collision.Initialize(this);
         
         /* Reallocator */
-        AsteroidReallocator asteroidReallocator = new AsteroidReallocator(gameObject.transform, spawner);
-        asteroidReallocator.Begin();
+        SystemManager.RegisterSystem(new AsteroidReallocator(gameObject.transform, spawner));
+        
     }
 }

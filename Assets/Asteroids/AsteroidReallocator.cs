@@ -1,11 +1,12 @@
 ﻿using System.Threading.Tasks;
+using Systems;
 using Assets.AllyaExtension;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Asteroids
 {
-    public struct AsteroidReallocator
+    public struct AsteroidReallocator : ISystem
     {
         private readonly IPositionSpawner spawner;
         private readonly Transform asteroid;
@@ -16,20 +17,10 @@ namespace Asteroids
         {
             this.asteroid = asteroid;
             this.spawner = spawner;
-            turn = 0;
+            turn = Random.Range(0, FrameInterval);
         }
 
-        public async void Begin()
-        {
-            int waitSpin = Random.Range(0, FrameInterval);
-            while (waitSpin-- > 0)
-            {
-                await Task.Yield();
-            }
-            Scheduler.OnUpdate.Subscribe(OnUpdate);
-        }
-
-        private void OnUpdate()
+        public void OnUpdate()
         {
             if (--turn > 0)
             {

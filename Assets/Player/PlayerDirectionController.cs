@@ -1,19 +1,27 @@
-﻿using UnityEngine;
+﻿using Systems;
+using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 
-public readonly struct UserShipDirectionController : IShipController
+public readonly struct PlayerDirectionController : ISystem
 {
     private static readonly Angle RotationPerSecond = Angle.FromDegrees(135.0f);
     private readonly KeyCode leftKeyCode;
+    private readonly Transform player;
     private readonly KeyCode rightKeyCode;
 
-    public UserShipDirectionController(KeyCode rightKeyCode, KeyCode leftKeyCode)
+    public PlayerDirectionController(Transform player, KeyCode rightKeyCode, KeyCode leftKeyCode)
     {
+        this.player = player;
         this.rightKeyCode = rightKeyCode;
         this.leftKeyCode = leftKeyCode;
     }
 
-    Vector2 IShipController.Direction(Vector2 direction)
+    public void OnUpdate()
+    {
+        player.transform.up = ApplyRotation(player.transform.up);
+    }
+
+    private Vector2 ApplyRotation(Vector2 direction)
     {
         if (Input.GetKey(leftKeyCode))
         {

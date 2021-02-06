@@ -1,8 +1,10 @@
 using UnityEngine;
+using Utils;
 using Random = UnityEngine.Random;
 
 public class Wander : ISteeringBehaviour
 {
+    private readonly Transform agent;
     private readonly float radius;
     private readonly float distanceFromAgent;
     private readonly Angle maxVariationPerSecond;
@@ -15,27 +17,21 @@ public class Wander : ISteeringBehaviour
     /// </remarks>
     private Vector2 localTarget;
 
-    public Wander(float radius, float distanceFromAgent, Angle maxVariationPerSecond)
+    public Wander(Transform agent, float radius, float distanceFromAgent, Angle maxVariationPerSecond)
     {
+        this.agent = agent;
         this.radius = radius;
         this.distanceFromAgent = distanceFromAgent;
         this.maxVariationPerSecond = maxVariationPerSecond;
         localTarget = Random.insideUnitCircle;
     }
 
-    public Vector2 Force(Vector2 direction)
+    public Vector2 Force()
     {
         Angle rotation = maxVariationPerSecond * Random.Range(-1.0f, 1.0f) * Time.deltaTime;
         localTarget = localTarget.normalized.RotateFast(rotation) * radius;
-        Vector3 force = direction * (distanceFromAgent + radius) + localTarget;
+        Vector3 force = agent.transform.Direction() * (distanceFromAgent + radius) + localTarget;
 
         return force.normalized;
-    }
-    
-    public void DebugGizmos(Vector2 agentPosition, Vector2 direction)
-    {
-        Vector2 circle = agentPosition + direction * (distanceFromAgent + radius);
-        Gizmos.DrawWireSphere(circle, radius);
-        Gizmos.DrawWireSphere(localTarget + circle, radius * 0.4f);
     }
 }

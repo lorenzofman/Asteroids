@@ -1,38 +1,22 @@
-using Assets.AllyaExtension;
+using Systems;
 using UnityEngine;
 
 /// <summary>
-/// Controls the ship with transform
+/// Moves the ship forwards
 /// </summary>
-/// <remarks>
-/// Todo: Similar control with forces
-/// </remarks>
-public readonly struct ShipController
+public readonly struct ShipController : ISystem
 {
-    private readonly Transform ship;
-    private readonly IShipController shipController;
     private const float Velocity = 16.0f;
+    private readonly Transform ship;
 
-    public ShipController(Transform ship, IShipController shipController)
+    public ShipController(Transform ship)
     {
         this.ship = ship;
-        this.shipController = shipController;
     }
 
-    public void Begin()
+    public void OnUpdate()
     {
-        Scheduler.OnUpdate.Subscribe(OnUpdate);
-    }
-    private void OnUpdate()
-    {
-        Vector3 dir = shipController.Direction(ship.transform.up);
-        AimAndMove(ship.transform, dir);
-    }
-
-    private static void AimAndMove(Transform t, Vector3 dir)
-    {
-        t.up = dir;
-        t.position += dir * Velocity * Time.deltaTime;
+        ship.position += ship.up * Velocity * Time.deltaTime;
     }
 
 }

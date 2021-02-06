@@ -1,24 +1,18 @@
-﻿using Assets.AllyaExtension;
+﻿using Systems;
 using UnityEngine;
 
-internal readonly struct EnemyDirectionController : IShipController
+internal struct EnemyDirectionController : ISystem
 {
-    private readonly Transform transform;
-    private readonly ISteeringBehaviour currentBehaviour;
-    public EnemyDirectionController(Transform transform)
+    private readonly Transform enemy;
+    private ISteeringBehaviour currentBehaviour;
+    public EnemyDirectionController(Transform enemy)
     {
-        this.transform = transform;
-        currentBehaviour = new Wander(5.0f, 10.0f, Angle.FromDegrees(1080.0f));
-        Scheduler.OnGizmos.Subscribe(DebugGizmos);
+        this.enemy = enemy;
+        currentBehaviour = new Wander(enemy, 5.0f, 10.0f, Angle.FromDegrees(1080.0f));
     }
 
-    private void DebugGizmos()
+    public void OnUpdate()
     {
-        currentBehaviour.DebugGizmos(transform.position, transform.up);
-    }
-
-    Vector2 IShipController.Direction(Vector2 direction)
-    {
-        return currentBehaviour.Force(direction);
+        
     }
 }

@@ -1,3 +1,4 @@
+using Systems;
 using Unity.Collections;
 using UnityEngine;
 
@@ -19,9 +20,8 @@ public class GameController : MonoBehaviour
 
         TorusPositionSpawner spawner = new TorusPositionSpawner(player.transform, spawnOffset, spawnRadius);
 
-        Shooter shooter = new Shooter(projectilePrefab, player.transform, spawner);
-        shooter.Begin();
-        
+        SystemManager.RegisterSystem(new Shooter(projectilePrefab, player.transform, spawner));
+
         for (int i = 0; i < enemyCount; i++)
         {
             CreateEnemy(spawner);
@@ -36,19 +36,15 @@ public class GameController : MonoBehaviour
     private static void CreateTrackingCamera(GameObject player)
     {
         Camera cam = FindObjectOfType<Camera>();
-        CameraFollower cameraFollower = new CameraFollower(cam.transform, player.transform);
-        cameraFollower.Begin();
+        SystemManager.RegisterSystem(new CameraFollower(cam.transform, player.transform));
     }
 
     private GameObject CreatePlayer()
     {
         GameObject go = CreateShip("Player");
 
-        /* Components */
-        UserShipDirectionController shipDirectionController = new UserShipDirectionController(leftKeyCode, rightKeyCode);
-        ShipController shipController = new ShipController(go.transform, shipDirectionController);
-
-        shipController.Begin();
+        SystemManager.RegisterSystem(new PlayerDirectionController(go.transform, leftKeyCode, rightKeyCode));
+        SystemManager.RegisterSystem(new ShipController(go.transform));
         return go;
     }
 
@@ -69,8 +65,7 @@ public class GameController : MonoBehaviour
     {
         GameObject enemy = CreateShip("Enemy");
         enemy.transform.position = spawner.Position();
-        EnemyDirectionController enemyController = new EnemyDirectionController(enemy.transform);
-        ShipController controller = new ShipController(enemy.transform, enemyController);
-        controller.Begin();
+        SystemManager.RegisterSystem(new EnemyDirectionController(enemy.transform));
+        SystemManager.RegisterSystem(new ShipController(enemy.transform));
     }
 }

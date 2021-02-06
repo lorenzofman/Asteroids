@@ -1,7 +1,8 @@
+using Systems;
 using Assets.AllyaExtension;
 using UnityEngine;
 
-public struct Shooter
+public struct Shooter : ISystem
 {
     private const float RateOfFire = 800; // Rounds Per Minute
     private const float ImpulseForce = 100.0f;
@@ -21,13 +22,8 @@ public struct Shooter
         lastShot = Time.time;
         fireInterval = 60.0f / RateOfFire;
     }
-    
-    public void Begin()
-    {
-        Scheduler.OnUpdate.Subscribe(OnUpdate);
-    }
 
-    private void OnUpdate()
+    public void OnUpdate()
     {
         if (lastShot + fireInterval > Time.time || !Input.GetKey(ShootKey))
         {
