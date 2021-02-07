@@ -93,7 +93,7 @@ public class GameController : MonoBehaviour
         SystemManager.RegisterSystem(enemyDirectionController);
         SystemManager.RegisterSystem(new ShipController(enemy.transform, 8.0f));
         SystemManager.RegisterSystem(new Reallocator(enemy.transform, spawner));
-        
+        DeathListener unused = new DeathListener(enemy, /*Todo: Layers.Asteroid |*/ Layers.Projectile | Layers.Player, OnEnemyDie);
         SystemManager.RegisterSystem(new EnemyFieldOfView(enemy.transform, 120.0f, 20.0f, 
             transparentMaterial, 1 << Layers.Asteroid, () =>
             {
@@ -102,5 +102,11 @@ public class GameController : MonoBehaviour
                 Shooter shooter = new Shooter(projectilePrefab, enemy.transform, spawner, 100);
                 SystemManager.RegisterSystem(new EnemyShooter(shooter, predicate));
             }));
+        
+    }
+
+    private void OnEnemyDie(GameObject obj)
+    {
+        obj.SetActive(false); // Todo: Destroy
     }
 }
