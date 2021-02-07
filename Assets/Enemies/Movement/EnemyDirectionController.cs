@@ -17,8 +17,8 @@ internal class EnemyDirectionController : ISystem
 
     public void DetectPlayer()
     {
-        // currentBehaviour = new Seek(enemy, player);
-        currentBehaviour = new Pursuit(enemy, player, 16.0f);
+        currentBehaviour = new Seek(enemy, player);
+        //currentBehaviour = new Pursuit(enemy, player, 16.0f);
     }
     
 

@@ -35,7 +35,7 @@ public class EnemyFieldOfView : ISystem
         triangles = new int[Quality * 3 - 3];
 
         mesh = new Mesh();
-        gameObject = ObjectUtils.CreateObject("Field of View", LayerMask.NameToLayer("Field Of View"),  mesh);
+        gameObject = ObjectUtils.CreateObject("Field of View", Layers.FieldOfView,  mesh);
         polygonCollider = gameObject.AddComponent<PolygonCollider2D>();
         polygonCollider.isTrigger = true;
         MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();

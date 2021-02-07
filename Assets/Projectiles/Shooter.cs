@@ -1,31 +1,27 @@
-using Systems;
-using Assets.AllyaExtension;
 using UnityEngine;
 
-public struct Shooter : ISystem
+public class Shooter
 {
-    private const float RateOfFire = 800; // Rounds Per Minute
-    private const float ImpulseForce = 100.0f;
-    private const KeyCode ShootKey = KeyCode.Space;
-
-    private readonly Transform player;
+    private const float ImpulseForce = 50.0f;
+    private readonly Transform shooterTransform;
     private readonly IPositionSpawner spawner;
     private readonly Pool<Transform> pool;
+        
     private readonly float fireInterval;
     private float lastShot;
     
-    public Shooter(Transform projectilePrefab, Transform player, IPositionSpawner spawner)
+    public Shooter(Transform projectilePrefab, Transform shooterTransform, IPositionSpawner spawner, int rateOfFire)
     {
-        this.player = player;
+        this.shooterTransform = shooterTransform;
         this.spawner = spawner;
         pool = new Pool<Transform>(new ComponentCreator<Transform>(projectilePrefab), 30);
         lastShot = Time.time;
-        fireInterval = 60.0f / RateOfFire;
+        fireInterval = 60.0f / rateOfFire;
     }
 
-    public void OnUpdate()
+    public void Shoot()
     {
-        if (lastShot + fireInterval > Time.time || !Input.GetKey(ShootKey))
+        if (lastShot + fireInterval > Time.time)
         {
             return;
         }
@@ -40,7 +36,7 @@ public struct Shooter : ISystem
     private void SetComponents(Component projectileInstance)
     {
         projectileInstance.gameObject.SetActive(true);
-        Transform ply = player.transform;
+        Transform ply = shooterTransform.transform;
         Transform proj = projectileInstance.transform;
 
         Vector3 dir = ply.up;
