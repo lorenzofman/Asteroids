@@ -9,7 +9,12 @@ namespace Systems
     {
         public static void RegisterSystem(ISystem system)
         {
-            Scheduler.OnUpdate.Subscribe(system.OnUpdate);   
+            Scheduler.OnUpdate.Subscribe(system.OnUpdate);
+        }
+
+        public static void DeregisterSystem(ISystem system)
+        {
+            Scheduler.OnUpdate.Unsubscribe(system.OnUpdate);
         }
     }
 }

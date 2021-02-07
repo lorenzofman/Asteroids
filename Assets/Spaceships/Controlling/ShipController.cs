@@ -6,17 +6,18 @@ using UnityEngine;
 /// </summary>
 public readonly struct ShipController : ISystem
 {
-    private const float Velocity = 16.0f;
     private readonly Transform ship;
+    private readonly float velocity;
 
-    public ShipController(Transform ship)
+    public ShipController(Transform ship, float velocity)
     {
         this.ship = ship;
+        this.velocity = velocity;
     }
 
     public void OnUpdate()
     {
-        ship.position += ship.up * Velocity * Time.deltaTime;
+        ship.position += ship.up * velocity * Time.deltaTime;
     }
 
 }

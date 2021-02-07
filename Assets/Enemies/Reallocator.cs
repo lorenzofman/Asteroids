@@ -2,18 +2,18 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Asteroids
+namespace Enemies
 {
-    public struct AsteroidReallocator : ISystem
+    public struct Reallocator : ISystem
     {
         private readonly IPositionSpawner spawner;
-        private readonly Transform asteroid;
+        private readonly Transform transform;
         private const int FrameInterval = 30;
         private int turn;
-        
-        public AsteroidReallocator(Transform asteroid, IPositionSpawner spawner)
+    
+        public Reallocator(Transform transform, IPositionSpawner spawner)
         {
-            this.asteroid = asteroid;
+            this.transform = transform;
             this.spawner = spawner;
             turn = Random.Range(0, FrameInterval);
         }
@@ -22,15 +22,14 @@ namespace Asteroids
         {
             if (--turn > 0)
             {
-                 return;
+                return;
             }
 
-            if (spawner.OutOfRange(asteroid.position))
+            if (spawner.OutOfRange(transform.position))
             {
-                asteroid.position = spawner.Position();
-                AsteroidUtils.ApplyImpulse(asteroid.gameObject.GetComponent<Rigidbody2D>());
+                transform.position = spawner.Position();
             }
-            
+        
             turn = FrameInterval;
         }
     }

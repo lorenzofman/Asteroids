@@ -1,4 +1,4 @@
-﻿internal enum PhysicsEventType
+﻿public enum PhysicsEventType
 {
     Collision,
     Collision2D,

@@ -3,20 +3,20 @@ using UnityEngine;
 
 public static class CollisionHelper
 {
-    private static void ListenToCollision<T>(this Component component, PhysicsEventType eventType, Action callback) where T : Component
+    public static void ListenToCollision(this GameObject gameObject, PhysicsEventType eventType, Action<GameObject> callback)
     {
-        BasePhysicsListener listener = SelectListener(component, eventType);
-        listener.AddListener(typeof(T), callback);
+        BasePhysicsListener listener = SelectListener(gameObject, eventType);
+        listener.AddListener(callback);
     }
 
-    private static BasePhysicsListener SelectListener(Component component, PhysicsEventType eventType)
+    private static BasePhysicsListener SelectListener(GameObject gameObject, PhysicsEventType eventType)
     {
         return eventType switch
         {
-            PhysicsEventType.Collision => component.GetOrCreate<CollisionListener>(),
-            PhysicsEventType.Collision2D => component.GetOrCreate<Collision2DListener>(),
-            PhysicsEventType.Trigger => component.GetOrCreate<TriggerListener>(),
-            PhysicsEventType.Trigger2D => component.GetOrCreate<Trigger2DListener>(),
+            PhysicsEventType.Collision => gameObject.GetOrCreate<CollisionListener>(),
+            PhysicsEventType.Collision2D => gameObject.GetOrCreate<Collision2DListener>(),
+            PhysicsEventType.Trigger => gameObject.GetOrCreate<TriggerListener>(),
+            PhysicsEventType.Trigger2D => gameObject.GetOrCreate<Trigger2DListener>(),
             _ => null
         };
     }

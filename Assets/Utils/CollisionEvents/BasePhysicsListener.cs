@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public abstract class BasePhysicsListener : MonoBehaviour
 {
-    private readonly Dictionary<Type, Action> triggers = new Dictionary<Type, Action>();
+    private readonly List<Action<GameObject>> triggers = new List<Action<GameObject>>();
     
-    public void AddListener(Type tag, Action action)
+    public void AddListener(Action<GameObject> action)
     {
-        triggers.Add(tag, action);
+        triggers.Add(action);
     }
 
     protected void OnPhysicsEvent(GameObject other)
     {
-        foreach (KeyValuePair<Type, Action> trigger in triggers.Where(trigger => other.GetComponent((Type) trigger.Key)))
+        foreach (Action<GameObject> trigger in triggers)
         {
-            trigger.Value?.Invoke();
+            trigger?.Invoke(other);
         }
     }
 }

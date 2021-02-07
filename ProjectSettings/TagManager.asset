@@ -12,11 +12,11 @@ TagManager:
   - Water
   - UI
   - PostProcessing
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Enemy
+  - Asteroid
+  - Projectile
+  - Field Of View
   - 
   - 
   - 

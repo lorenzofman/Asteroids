@@ -28,7 +28,8 @@ public readonly struct Asteroid
         this.health = health;
         NativeArray<Vector2> polygons =
             RandomUtils.RandomConvexPolygon(Random.Range(MinVertices, MaxVertices), health / 2.71f);
-        gameObject = ObjectUtils.CreatePolygonalObject("Asteroid", polygons, 0.1f, position);
+        gameObject = ObjectUtils.CreatePolygonalObject("Asteroid", LayerMask.NameToLayer("Asteroid"),  polygons, 0.1f);
+        gameObject.transform.position = position;
         AddComponents();
         polygons.Dispose();
     }
