@@ -1,40 +1,32 @@
 using System.Threading.Tasks;
+using Systems;
 using UnityEngine;
 
-public struct PoolReturner
+public readonly struct PoolReturner : ISystem
 {
     private readonly Pool<Transform> pool;
     private readonly Transform obj;
     private readonly IPositionSpawner spawner;
-    private bool returned;
     
     public PoolReturner(Pool<Transform> pool, Transform obj, IPositionSpawner spawner)
     {
         this.pool = pool;
         this.obj = obj;
         this.spawner = spawner;
-        returned = false;
     }
 
-    public async void Begin()
+    public void OnUpdate()
     {
-        while (Application.isPlaying && !returned)
+        if (spawner.OutOfRange(obj.position))
         {
-            if (!spawner.OutOfRange(obj.position))
-            {
-                await Task.Delay(500);
-                continue;
-            }
-
             Return();
         }
     }
-
+    
     public void Return()
     {
         obj.gameObject.SetActive(false);
         pool.Return(obj);
-        returned = true;
+        SystemManager.DeregisterSystem(this);
     }
-    
 }

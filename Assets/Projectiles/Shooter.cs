@@ -1,3 +1,4 @@
+using Systems;
 using UnityEngine;
 
 public class Shooter
@@ -29,7 +30,7 @@ public class Shooter
         Transform projectileInstance = pool.Retrieve();
         SetComponents(projectileInstance);
         PoolReturner returner = new PoolReturner(pool, projectileInstance, spawner);
-        returner.Begin();
+        SystemManager.RegisterSystem(returner, null);
         projectileInstance.GetComponent<Projectile>().Initialize(returner);
     }
 

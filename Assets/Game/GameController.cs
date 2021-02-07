@@ -26,7 +26,7 @@ public class GameController : MonoBehaviour
         TorusPositionSpawner spawner = new TorusPositionSpawner(player.transform, 60, 100);
 
         Shooter shooter = new Shooter(projectilePrefab, player.transform, spawner, 600);
-        SystemManager.RegisterSystem(new PlayerShooter(shooter));
+        SystemManager.RegisterSystem(new PlayerShooter(shooter), new ObjectBind(player));
 
         for (int i = 0; i < enemyCount; i++)
         {
@@ -37,38 +37,34 @@ public class GameController : MonoBehaviour
         {        
             Asteroid.CreateAsteroid(spawner);
         }
-        GameEvents.GameOver.AddListener(OnGameOver);
     }
-
-    private void OnGameOver(GameObject player)
-    {
-        player.SetActive(false); // Todo: destroy player
-        gameOver.SetActive(true);
-    }
-
+    
     private static void CreateTrackingCamera(GameObject player)
     {
         Camera cam = FindObjectOfType<Camera>();
-        SystemManager.RegisterSystem(new CameraFollower(cam.transform, player.transform));
+        SystemManager.RegisterSystem(new CameraFollower(cam.transform, player.transform), new ObjectBind(player));
     }
 
     private GameObject CreatePlayer()
     {
         GameObject go = CreateShip("Player", Layers.Player);
-        SystemManager.RegisterSystem(new PlayerDirectionController(go.transform, leftKeyCode, rightKeyCode));
-        SystemManager.RegisterSystem(new ShipController(go.transform, 16.0f));
+        ObjectBind playerBind = new ObjectBind(go);
+        SystemManager.RegisterSystem(new PlayerDirectionController(go.transform, leftKeyCode, rightKeyCode), playerBind);
+        SystemManager.RegisterSystem(new ShipController(go.transform, 16.0f), playerBind);
         DeathListener unused = new DeathListener(go, Layers.Asteroid | Layers.Projectile | Layers.Enemy, OnPlayerDie);
         return go;
     }
 
     private void OnPlayerDie(GameObject player)
     {
-        GameEvents.GameOver.Invoke(player);
+        Destroy(player);
+        gameOver.SetActive(true);
         player.gameObject.SetActive(false);
         foreach (EnemyDirectionController enemies in enemyControllers)
         {
             enemies.Wander();
         }
+        GameEvents.GameOver.Invoke();
     }
 
     private static GameObject CreateShip(string name, LayerMask layer)
@@ -90,23 +86,24 @@ public class GameController : MonoBehaviour
         enemy.transform.position = spawner.Position();
         EnemyDirectionController enemyDirectionController = new EnemyDirectionController(enemy.transform, player);
         enemyControllers.Add(enemyDirectionController);
-        SystemManager.RegisterSystem(enemyDirectionController);
-        SystemManager.RegisterSystem(new ShipController(enemy.transform, 8.0f));
-        SystemManager.RegisterSystem(new Reallocator(enemy.transform, spawner));
-        DeathListener unused = new DeathListener(enemy, /*Todo: Layers.Asteroid |*/ Layers.Projectile | Layers.Player, OnEnemyDie);
+        ObjectBind enemyBind = new ObjectBind(enemy);
+        SystemManager.RegisterSystem(enemyDirectionController, enemyBind);
+        SystemManager.RegisterSystem(new ShipController(enemy.transform, 8.0f), enemyBind);
+        SystemManager.RegisterSystem(new Reallocator(enemy.transform, spawner), enemyBind);
+        DeathListener unused = new DeathListener(enemy, Layers.Asteroid | Layers.Projectile | Layers.Player | Layers.Enemy, OnEnemyDie);
         SystemManager.RegisterSystem(new EnemyFieldOfView(enemy.transform, 120.0f, 20.0f, 
             transparentMaterial, 1 << Layers.Asteroid, () =>
             {
                 enemyDirectionController.Seek();
                 LineOfSightPredicate predicate = new LineOfSightPredicate(enemy.transform);
                 Shooter shooter = new Shooter(projectilePrefab, enemy.transform, spawner, 100);
-                SystemManager.RegisterSystem(new EnemyShooter(shooter, predicate));
-            }));
+                SystemManager.RegisterSystem(new EnemyShooter(shooter, predicate), enemyBind);
+            }), enemyBind);
         
     }
 
-    private void OnEnemyDie(GameObject obj)
+    private static void OnEnemyDie(GameObject obj)
     {
-        obj.SetActive(false); // Todo: Destroy
+        Destroy(obj);
     }
 }

@@ -32,9 +32,9 @@ public class Schedule
         IterationSafe(() => ImmediateSubscribe(action, priority));
     }
 
-    public void Unsubscribe(Action action)
+    public void Unsubscribe(Action action, bool bestEffort = false)
     {
-        IterationSafe(() => ImmediateUnsubscribe(action));
+        IterationSafe(() => ImmediateUnsubscribe(action, bestEffort));
     }
 
     public void SubscribeOnce(Action action, int priority = 0)
@@ -65,7 +65,7 @@ public class Schedule
             }
             catch (Exception ex)
             {
-                exceptions.Enqueue(new SchedulingException(ex, action));
+                // exceptions.Enqueue(new SchedulingException(ex, action));
             }
         }
         executing = false;
@@ -90,9 +90,14 @@ public class Schedule
         actions.Add(priority, action);
     }
 
-    private void ImmediateUnsubscribe(Action action)
+    private void ImmediateUnsubscribe(Action action, bool bestEffort)
     {
-        actions.RemoveAt(actions.IndexOfValue(action));
+        int index = actions.IndexOfValue(action);
+        if (bestEffort && index < 0)
+        {
+            return;
+        }
+        actions.RemoveAt(index);
     }
 
     private void ImmediateClear()

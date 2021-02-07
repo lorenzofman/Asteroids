@@ -307,7 +307,7 @@ MonoBehaviour:
   leftKeyCode: 276
   rightKeyCode: 275
   enemyCount: 20
-  asteroidsCount: 200
+  asteroidsCount: 100
   transparentMaterial: {fileID: 2100000, guid: e48ee9f11d54c8745b007a8eb33b9521, type: 2}
   gameOver: {fileID: 1728526199}
 --- !u!114 &148607211

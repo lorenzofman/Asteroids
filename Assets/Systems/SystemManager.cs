@@ -1,20 +1,30 @@
-﻿using Assets.AllyaExtension;
+﻿using System;
+using Assets.AllyaExtension;
+using UnityEngine;
 
 namespace Systems
 {
-    /// <remarks>
-    /// Todo: Bind systems to objects, components or events
-    /// </remarks>
     public static class SystemManager
     {
-        public static void RegisterSystem(ISystem system)
+        public static void RegisterSystem(ISystem system, IBind bind)
         {
-            Scheduler.OnUpdate.Subscribe(system.OnUpdate);
+            Action systemUpdate = system.OnUpdate;
+            /* Unsubscribe method when binding ends */
+            bind?.Bind(() =>
+            {
+                Debug.Log($"Unbinding {system.GetType()} system");
+                if (system is IDisposableSystem disposable)
+                {
+                    disposable.OnStop();
+                }
+                Scheduler.OnUpdate.Unsubscribe(systemUpdate, true);
+            });
+            Scheduler.OnUpdate.Subscribe(systemUpdate);
         }
-
+        
         public static void DeregisterSystem(ISystem system)
         {
-            Scheduler.OnUpdate.Unsubscribe(system.OnUpdate);
+            Scheduler.OnUpdate.Unsubscribe(system.OnUpdate, true);
         }
     }
 }

@@ -3,7 +3,7 @@ using Systems;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class EnemyFieldOfView : ISystem
+public class EnemyFieldOfView : ISystem, IDisposableSystem
 {
     private const int Quality = 120;
     private readonly Transform parent;
@@ -96,5 +96,10 @@ public class EnemyFieldOfView : ISystem
     {
         float r = angle * Mathf.Deg2Rad;
         return new Vector2(Mathf.Cos(r), Mathf.Sin(r));
+    }
+
+    public void OnStop()
+    {
+        Object.Destroy(gameObject);
     }
 }

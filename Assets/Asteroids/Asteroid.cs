@@ -2,6 +2,7 @@ using Systems;
 using Asteroids;
 using Unity.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public readonly struct Asteroid
 {
@@ -42,7 +43,6 @@ public readonly struct Asteroid
         Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
         AsteroidUtils.ApplyImpulse(rb);
         
-        
         if (health <= 0)
         {
             return;
@@ -61,7 +61,7 @@ public readonly struct Asteroid
         collision.Initialize(this);
         
         /* Reallocator */
-        SystemManager.RegisterSystem(new AsteroidReallocator(gameObject.transform, spawner));
-        
+        SystemManager.RegisterSystem(new AsteroidReallocator(gameObject.transform, spawner), 
+            new UnityEventBind(GameEvents.GameOver));
     }
 }
