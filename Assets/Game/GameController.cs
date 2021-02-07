@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Systems;
 using Enemies;
 using Projectiles;
@@ -12,11 +13,14 @@ public class GameController : MonoBehaviour
     [SerializeField] private int enemyCount;
     [SerializeField] private int asteroidsCount;
     [SerializeField] private Material transparentMaterial;
+    [SerializeField] private GameObject gameOver;
 
+    private readonly List<EnemyDirectionController> enemyControllers = new List<EnemyDirectionController>();
+    
     private void Start()
     {
         GameObject player = CreatePlayer();
-        
+
         CreateTrackingCamera(player);
 
         TorusPositionSpawner spawner = new TorusPositionSpawner(player.transform, 60, 100);
@@ -33,6 +37,13 @@ public class GameController : MonoBehaviour
         {        
             Asteroid.CreateAsteroid(spawner);
         }
+        GameEvents.GameOver.AddListener(OnGameOver);
+    }
+
+    private void OnGameOver(GameObject player)
+    {
+        player.SetActive(false); // Todo: destroy player
+        gameOver.SetActive(true);
     }
 
     private static void CreateTrackingCamera(GameObject player)
@@ -46,7 +57,18 @@ public class GameController : MonoBehaviour
         GameObject go = CreateShip("Player", Layers.Player);
         SystemManager.RegisterSystem(new PlayerDirectionController(go.transform, leftKeyCode, rightKeyCode));
         SystemManager.RegisterSystem(new ShipController(go.transform, 16.0f));
+        DeathListener unused = new DeathListener(go, Layers.Asteroid | Layers.Projectile | Layers.Enemy, OnPlayerDie);
         return go;
+    }
+
+    private void OnPlayerDie(GameObject player)
+    {
+        GameEvents.GameOver.Invoke(player);
+        player.gameObject.SetActive(false);
+        foreach (EnemyDirectionController enemies in enemyControllers)
+        {
+            enemies.Wander();
+        }
     }
 
     private static GameObject CreateShip(string name, LayerMask layer)
@@ -67,6 +89,7 @@ public class GameController : MonoBehaviour
         GameObject enemy = CreateShip("Enemy", Layers.Enemy);
         enemy.transform.position = spawner.Position();
         EnemyDirectionController enemyDirectionController = new EnemyDirectionController(enemy.transform, player);
+        enemyControllers.Add(enemyDirectionController);
         SystemManager.RegisterSystem(enemyDirectionController);
         SystemManager.RegisterSystem(new ShipController(enemy.transform, 8.0f));
         SystemManager.RegisterSystem(new Reallocator(enemy.transform, spawner));
@@ -74,7 +97,7 @@ public class GameController : MonoBehaviour
         SystemManager.RegisterSystem(new EnemyFieldOfView(enemy.transform, 120.0f, 20.0f, 
             transparentMaterial, 1 << Layers.Asteroid, () =>
             {
-                enemyDirectionController.DetectPlayer();
+                enemyDirectionController.Seek();
                 LineOfSightPredicate predicate = new LineOfSightPredicate(enemy.transform);
                 Shooter shooter = new Shooter(projectilePrefab, enemy.transform, spawner, 100);
                 SystemManager.RegisterSystem(new EnemyShooter(shooter, predicate));

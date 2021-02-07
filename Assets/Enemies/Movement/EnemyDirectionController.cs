@@ -15,10 +15,19 @@ internal class EnemyDirectionController : ISystem
         currentBehaviour = new Wander(enemy, 5.0f, 10.0f, Angle.FromDegrees(360.0f));
     }
 
-    public void DetectPlayer()
+    public void Wander()
+    {
+        currentBehaviour = new Wander(enemy, 5.0f, 10.0f, Angle.FromDegrees(360.0f));
+    }
+    
+    public void Pursuit(float evaderSpeed)
+    {
+        currentBehaviour = new Pursuit(enemy, player, evaderSpeed);
+    }
+    
+    public void Seek()
     {
         currentBehaviour = new Seek(enemy, player);
-        //currentBehaviour = new Pursuit(enemy, player, 16.0f);
     }
     
 
