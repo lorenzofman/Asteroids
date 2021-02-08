@@ -32,7 +32,7 @@ public readonly struct TorusPositionSpawner : IPositionSpawner
     }
     
 
-    public Vector2 Position() => RandomUtils.RandomSpawnPosition(innerRadius, outerRadius) + parent.position;
+    public Vector2 Position() => RandomUtils.RandomSpawnPosition(innerRadius, outerRadius) + (parent ? parent.position : Vector3.zero);
 
     public bool OutOfRange(Vector3 position) => (parent.position - position).sqrMagnitude > outerRadiusSq;
 }

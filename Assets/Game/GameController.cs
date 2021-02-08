@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Systems;
+using Assets.AllyaExtension;
 using Enemies;
 using Projectiles;
 using TMPro;
@@ -17,26 +18,42 @@ public class GameController : MonoBehaviour
     [SerializeField] private int asteroidsCount;
     [SerializeField] private Material transparentMaterial;
     [SerializeField] private GameObject gameOver;
+    [SerializeField] private TextMeshProUGUI survivedTimeText;
     [SerializeField] private TextMeshProUGUI enemiesCountText;
+    [SerializeField] private TextMeshProUGUI deadEnemiesCountText;
 
-    public static bool GameOver;
+    private static bool GameOver;
 
     private int Enemies
     {
         get => enemies;
         set
         {
-            enemiesCountText.text = enemies.ToString();
             enemies = value;
+            enemiesCountText.text = enemies.ToString();
         }
     }
     private int enemies;
+    
+    private int DeadEnemies
+    {
+        get => deadEnemies;
+        set
+        {
+            deadEnemies = value;
+            deadEnemiesCountText.text = deadEnemies.ToString();
+        }
+    }
+    private int deadEnemies;
+    private float startTime;
     
     private readonly List<EnemyDirectionController> enemyControllers = new List<EnemyDirectionController>();
     private const int EnemySpawnInterval = 10;
 
     private void Start()
     {
+        startTime = Time.time;
+        
         GameObject player = CreatePlayer();
 
         CreateTrackingCamera(player);
@@ -57,6 +74,19 @@ public class GameController : MonoBehaviour
         }
 
         AddNewEnemies(spawner, player.transform);
+    }
+
+    private void Update()
+    {
+        if (GameOver)
+        {
+            return;
+        }
+
+        int time = (int) (Time.time - startTime);
+        int minutes = time / 60;
+        int seconds = time % 60;
+        survivedTimeText.text = $"{minutes:00}:{seconds:00}";
     }
 
     private async void AddNewEnemies(IPositionSpawner spawner, Transform player)
@@ -86,6 +116,8 @@ public class GameController : MonoBehaviour
 
     private async void OnPlayerDie(GameObject player)
     {
+        GameOver = true;
+        Scheduler.OnUpdate.Clear();
         Destroy(player);
         gameOver.SetActive(true);
         player.gameObject.SetActive(false);
@@ -99,6 +131,7 @@ public class GameController : MonoBehaviour
         {
             if (Input.anyKeyDown)
             {
+                GameOver = false;
                 SceneManager.LoadScene(0);
                 break;
             }
@@ -145,9 +178,10 @@ public class GameController : MonoBehaviour
     private void OnEnemyCollide(GameObject obj, EnemyDirectionController dirController, IPositionSpawner spawner)
     {
         /* If is seeking/pursuiting or visible*/
-        if (!dirController.IsWandering || obj.GetComponent<MeshRenderer>().isVisible || GameOver)
+        if (!dirController.IsWandering || obj.GetComponent<MeshRenderer>().isVisible)
         {
             Enemies--;
+            DeadEnemies++;
             Destroy(obj);
         }
         else

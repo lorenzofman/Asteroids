@@ -4,7 +4,7 @@ using Random = UnityEngine.Random;
 
 namespace Asteroids
 {
-    public struct AsteroidReallocator : ISystem
+    public class AsteroidReallocator : ISystem
     {
         private readonly IPositionSpawner spawner;
         private readonly Transform asteroid;

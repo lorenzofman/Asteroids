@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace Projectiles
 {
-    public struct PlayerShooter : ISystem
+    public class PlayerShooter : ISystem
     {
         private const KeyCode ShootKey = KeyCode.Space;
-        private Shooter shooter;
+        private readonly Shooter shooter;
 
         public PlayerShooter(Shooter shooter)
         {

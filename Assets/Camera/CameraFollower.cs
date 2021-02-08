@@ -1,7 +1,7 @@
 using Systems;
 using UnityEngine;
 
-public readonly struct CameraFollower : ISystem
+public class CameraFollower : ISystem
 {
     private readonly Transform camera;
     private readonly Transform target;

@@ -65,7 +65,8 @@ public class Schedule
             }
             catch (Exception ex)
             {
-                // exceptions.Enqueue(new SchedulingException(ex, action));
+                exceptions.Enqueue(new SchedulingException(ex, action));
+                IterationSafe(() => Unsubscribe(action));
             }
         }
         executing = false;

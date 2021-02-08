@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Moves the ship forwards
 /// </summary>
-public readonly struct ShipController : ISystem
+public class ShipController : ISystem
 {
     private readonly Transform ship;
     private readonly float velocity;

@@ -2,7 +2,7 @@
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 
-public readonly struct PlayerDirectionController : ISystem
+public class PlayerDirectionController : ISystem
 {
     private static readonly Angle RotationPerSecond = Angle.FromDegrees(135.0f);
     private readonly KeyCode leftKeyCode;

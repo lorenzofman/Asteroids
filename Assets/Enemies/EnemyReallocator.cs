@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
-using Systems;
+﻿using Systems;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Enemies
 {
-    public struct EnemyReallocator : ISystem
+    public class EnemyReallocator : ISystem
     {
         private readonly IPositionSpawner spawner;
         private readonly Transform transform;
