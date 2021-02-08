@@ -29,20 +29,9 @@ namespace Enemies
             if (spawner.OutOfRange(transform.position))
             {
                 transform.position = spawner.Position();
-                DeactivateCollider();
             }
         
             turn = FrameInterval;
-        }
-
-        /// <summary>
-        /// Gambiarra para os inimigos sobreviverem um pouco mais
-        /// </summary>
-        private async void DeactivateCollider()
-        {
-            transform.GetComponentInChildren<Collider2D>().enabled = false;
-            await Task.Delay(1000);
-            transform.GetComponentInChildren<Collider2D>().enabled = true;
         }
     }
 }

@@ -17,6 +17,8 @@ internal class EnemyDirectionController : ISystem
         obstacleAvoidance = new CollisionAvoidance(enemy, 1 << Layers.SteeringAvoidance, 20.0f, 90.0f);
     }
 
+    public bool IsWandering => currentBehaviour is Wander;
+
     public void Wander()
     {
         if (currentBehaviour is Wander)

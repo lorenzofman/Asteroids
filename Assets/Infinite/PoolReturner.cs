@@ -1,8 +1,7 @@
-using System.Threading.Tasks;
 using Systems;
 using UnityEngine;
 
-public readonly struct PoolReturner : ISystem
+public class PoolReturner : ISystem
 {
     private readonly Pool<Transform> pool;
     private readonly Transform obj;

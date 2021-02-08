@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Systems;
 using Enemies;
 using Projectiles;
+using TMPro;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,9 +17,24 @@ public class GameController : MonoBehaviour
     [SerializeField] private int asteroidsCount;
     [SerializeField] private Material transparentMaterial;
     [SerializeField] private GameObject gameOver;
+    [SerializeField] private TextMeshProUGUI enemiesCountText;
 
-    private readonly List<EnemyDirectionController> enemyControllers = new List<EnemyDirectionController>();
+    public static bool GameOver;
+
+    private int Enemies
+    {
+        get => enemies;
+        set
+        {
+            enemiesCountText.text = enemies.ToString();
+            enemies = value;
+        }
+    }
+    private int enemies;
     
+    private readonly List<EnemyDirectionController> enemyControllers = new List<EnemyDirectionController>();
+    private const int EnemySpawnInterval = 10;
+
     private void Start()
     {
         GameObject player = CreatePlayer();
@@ -27,7 +43,7 @@ public class GameController : MonoBehaviour
 
         TorusPositionSpawner spawner = new TorusPositionSpawner(player.transform, 60, 100);
 
-        Shooter shooter = new Shooter(projectilePrefab, player.transform, spawner, 600);
+        Shooter shooter = new Shooter(projectilePrefab, player.transform, spawner, 200);
         SystemManager.RegisterSystem(new PlayerShooter(shooter), new ObjectBind(player));
 
         for (int i = 0; i < enemyCount; i++)
@@ -39,12 +55,23 @@ public class GameController : MonoBehaviour
         {        
             Asteroid.CreateAsteroid(spawner);
         }
+
+        AddNewEnemies(spawner, player.transform);
     }
-    
+
+    private async void AddNewEnemies(IPositionSpawner spawner, Transform player)
+    {
+        while (Application.isPlaying && !GameOver)
+        {
+            CreateEnemy(spawner, player);
+            await Task.Delay(EnemySpawnInterval * 1000);
+        }
+    }
+
     private static void CreateTrackingCamera(GameObject player)
     {
         Camera cam = FindObjectOfType<Camera>();
-        SystemManager.RegisterSystem(new CameraFollower(cam.transform, player.transform), new ObjectBind(player));
+        SystemManager.RegisterSystem(new CameraFollower(cam.transform, player.transform), new ObjectBind(player), 1);
     }
 
     private GameObject CreatePlayer()
@@ -102,7 +129,8 @@ public class GameController : MonoBehaviour
         SystemManager.RegisterSystem(enemyDirectionController, enemyBind);
         SystemManager.RegisterSystem(new ShipController(enemy.transform, 8.0f), enemyBind);
         SystemManager.RegisterSystem(new EnemyReallocator(enemy.transform, spawner), enemyBind);
-        DeathListener unused = new DeathListener(enemy, Layers.Asteroid | Layers.Projectile | Layers.Player | Layers.Enemy, OnEnemyDie);
+        DeathListener unused = new DeathListener(enemy, Layers.Asteroid | Layers.Projectile | Layers.Player | Layers.Enemy,
+            obj => OnEnemyCollide(obj, enemyDirectionController, spawner));
         SystemManager.RegisterSystem(new EnemyFieldOfView(enemy.transform, 90.0f, 20.0f, 
             transparentMaterial, 1 << Layers.Asteroid, () =>
             {
@@ -111,11 +139,20 @@ public class GameController : MonoBehaviour
                 Shooter shooter = new Shooter(projectilePrefab, enemy.transform, spawner, 100);
                 SystemManager.RegisterSystem(new EnemyShooter(shooter, predicate), enemyBind);
             }), enemyBind);
-        
+        Enemies++;
     }
 
-    private static void OnEnemyDie(GameObject obj)
+    private void OnEnemyCollide(GameObject obj, EnemyDirectionController dirController, IPositionSpawner spawner)
     {
-        Destroy(obj);
+        /* If is seeking/pursuiting or visible*/
+        if (!dirController.IsWandering || obj.GetComponent<MeshRenderer>().isVisible || GameOver)
+        {
+            Enemies--;
+            Destroy(obj);
+        }
+        else
+        {
+            obj.transform.position = spawner.Position();
+        }
     }
 }

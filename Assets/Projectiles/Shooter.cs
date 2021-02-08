@@ -30,7 +30,7 @@ public class Shooter
         Transform projectileInstance = pool.Retrieve();
         SetComponents(projectileInstance);
         PoolReturner returner = new PoolReturner(pool, projectileInstance, spawner);
-        SystemManager.RegisterSystem(returner, null);
+        SystemManager.RegisterSystem(returner, null, -1);
         projectileInstance.GetComponent<Projectile>().Initialize(returner);
     }
 

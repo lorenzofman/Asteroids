@@ -40,7 +40,7 @@ public readonly struct Asteroid
     public void Subdivide()
     {
         Vector3 pos = gameObject.transform.position;
-
+        
         gameObject.transform.position = spawner.Position();
         Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
         AsteroidUtils.ApplyImpulse(rb);

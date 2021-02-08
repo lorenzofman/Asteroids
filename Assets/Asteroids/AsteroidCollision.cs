@@ -1,5 +1,4 @@
-﻿using NSubstitute;
-using UnityEngine;
+﻿using UnityEngine;
 
 internal class AsteroidCollision : MonoBehaviour
 {
@@ -8,6 +7,12 @@ internal class AsteroidCollision : MonoBehaviour
     public void Initialize(Asteroid asteroid)
     {
         this.asteroid = asteroid;
+        GameEvents.GameOver.AddListener(OnGameOver);
+    }
+
+    private void OnGameOver()
+    {
+        Destroy(this);
     }
 
     private void OnCollisionEnter2D(Collision2D other)

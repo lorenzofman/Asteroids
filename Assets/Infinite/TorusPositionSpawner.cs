@@ -30,6 +30,7 @@ public readonly struct TorusPositionSpawner : IPositionSpawner
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(center, outerRadius);
     }
+    
 
     public Vector2 Position() => RandomUtils.RandomSpawnPosition(innerRadius, outerRadius) + parent.position;
 

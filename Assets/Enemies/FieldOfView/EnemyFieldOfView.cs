@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 
 public class EnemyFieldOfView : ISystem, IDisposableSystem
 {
-    private const int Quality = 120;
+    private const int Quality = 60;
     private readonly Transform parent;
     private readonly float fieldOfView;
     private readonly float length;
@@ -78,7 +78,7 @@ public class EnemyFieldOfView : ISystem, IDisposableSystem
         collisionPoints[verticesIndex] = origin; // Close the polygon
 
         int trianglesIndex = 0;
-        for (int i = 2; i < mesh.vertices.Length; i++)
+        for (int i = 2; i < vertices.Length; i++)
         {
             triangles[trianglesIndex++] = 0;
             triangles[trianglesIndex++] = i - 1;

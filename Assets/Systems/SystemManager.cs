@@ -5,7 +5,7 @@ namespace Systems
 {
     public static class SystemManager
     {
-        public static void RegisterSystem(ISystem system, IBind bind)
+        public static void RegisterSystem(ISystem system, IBind bind, int priority = 0)
         {
             Action systemUpdate = system.OnUpdate;
             /* Unsubscribe method when binding ends */
@@ -17,7 +17,7 @@ namespace Systems
                 }
                 Scheduler.OnUpdate.Unsubscribe(systemUpdate, true);
             });
-            Scheduler.OnUpdate.Subscribe(systemUpdate);
+            Scheduler.OnUpdate.Subscribe(systemUpdate, priority);
         }
         
         public static void DeregisterSystem(ISystem system)
