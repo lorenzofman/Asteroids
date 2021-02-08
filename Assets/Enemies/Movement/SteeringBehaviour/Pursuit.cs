@@ -18,7 +18,7 @@ namespace Enemies.SteeringBehaviour
         public Vector2 Force()
         {
             Vector3 prediction = evader.forward * evaderSpeed * Time.deltaTime;
-            return evader.position + prediction - stalker.position;
+            return (evader.position + prediction - stalker.position).normalized;
         }
     }
 }

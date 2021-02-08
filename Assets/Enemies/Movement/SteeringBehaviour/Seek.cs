@@ -15,7 +15,7 @@ namespace Enemies.SteeringBehaviour
 
         public Vector2 Force()
         {
-            return target.position - seeker.position;
+            return (target.position - seeker.position).normalized;
         }
     }
 }

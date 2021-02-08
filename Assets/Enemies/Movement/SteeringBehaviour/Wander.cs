@@ -1,7 +1,7 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Wander : ISteeringBehaviour
+public struct Wander : ISteeringBehaviour
 {
     private readonly Transform agent;
     private readonly float radius;
@@ -30,7 +30,6 @@ public class Wander : ISteeringBehaviour
         Angle rotation = maxVariationPerSecond * Random.Range(-1.0f, 1.0f) * Time.deltaTime;
         localTarget = localTarget.normalized.RotateFast(rotation) * radius;
         Vector3 force = (Vector2) agent.transform.up * (distanceFromAgent + radius) + localTarget;
-
         return force.normalized;
     }
 }

@@ -1,17 +1,18 @@
-﻿using Systems;
+﻿using System.Threading.Tasks;
+using Systems;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Enemies
 {
-    public struct Reallocator : ISystem
+    public struct EnemyReallocator : ISystem
     {
         private readonly IPositionSpawner spawner;
         private readonly Transform transform;
         private const int FrameInterval = 30;
         private int turn;
     
-        public Reallocator(Transform transform, IPositionSpawner spawner)
+        public EnemyReallocator(Transform transform, IPositionSpawner spawner)
         {
             this.transform = transform;
             this.spawner = spawner;
@@ -28,9 +29,20 @@ namespace Enemies
             if (spawner.OutOfRange(transform.position))
             {
                 transform.position = spawner.Position();
+                DeactivateCollider();
             }
         
             turn = FrameInterval;
+        }
+
+        /// <summary>
+        /// Gambiarra para os inimigos sobreviverem um pouco mais
+        /// </summary>
+        private async void DeactivateCollider()
+        {
+            transform.GetComponentInChildren<Collider2D>().enabled = false;
+            await Task.Delay(1000);
+            transform.GetComponentInChildren<Collider2D>().enabled = true;
         }
     }
 }

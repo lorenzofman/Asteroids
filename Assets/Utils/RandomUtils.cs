@@ -3,6 +3,9 @@ using UnityEngine;
 
 public static class RandomUtils
 {
+    public const float MinVertexDisplacement = 0.4f;
+    public const float MaxVertexDisplacement = 1.6f;
+
     public static Vector3 RandomSpawnPosition(float spawnOffset, float spawnRadius)
     {
         float r = Random.Range(0, Mathf.PI * 2);
@@ -18,7 +21,7 @@ public static class RandomUtils
         for (int i = 0; i < vertices; i++)
         {
             float theta = i * dx + initial;
-            polygons[i] = new Vector2(Mathf.Cos(theta), Mathf.Sin(theta)) * Random.Range(0.4f, 1.6f) * radius;
+            polygons[i] = new Vector2(Mathf.Cos(theta), Mathf.Sin(theta)) * Random.Range(MinVertexDisplacement, MaxVertexDisplacement) * radius;
         }
         
         return polygons;

@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Systems;
 using Enemies;
 using Projectiles;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -55,7 +57,7 @@ public class GameController : MonoBehaviour
         return go;
     }
 
-    private void OnPlayerDie(GameObject player)
+    private async void OnPlayerDie(GameObject player)
     {
         Destroy(player);
         gameOver.SetActive(true);
@@ -65,6 +67,16 @@ public class GameController : MonoBehaviour
             enemies.Wander();
         }
         GameEvents.GameOver.Invoke();
+        
+        while (Application.isPlaying)
+        {
+            if (Input.anyKeyDown)
+            {
+                SceneManager.LoadScene(0);
+                break;
+            }
+            await Task.Yield();
+        }
     }
 
     private static GameObject CreateShip(string name, LayerMask layer)
@@ -89,12 +101,12 @@ public class GameController : MonoBehaviour
         ObjectBind enemyBind = new ObjectBind(enemy);
         SystemManager.RegisterSystem(enemyDirectionController, enemyBind);
         SystemManager.RegisterSystem(new ShipController(enemy.transform, 8.0f), enemyBind);
-        SystemManager.RegisterSystem(new Reallocator(enemy.transform, spawner), enemyBind);
+        SystemManager.RegisterSystem(new EnemyReallocator(enemy.transform, spawner), enemyBind);
         DeathListener unused = new DeathListener(enemy, Layers.Asteroid | Layers.Projectile | Layers.Player | Layers.Enemy, OnEnemyDie);
-        SystemManager.RegisterSystem(new EnemyFieldOfView(enemy.transform, 120.0f, 20.0f, 
+        SystemManager.RegisterSystem(new EnemyFieldOfView(enemy.transform, 90.0f, 20.0f, 
             transparentMaterial, 1 << Layers.Asteroid, () =>
             {
-                enemyDirectionController.Seek();
+                enemyDirectionController.Pursuit(16.0f);
                 LineOfSightPredicate predicate = new LineOfSightPredicate(enemy.transform);
                 Shooter shooter = new Shooter(projectilePrefab, enemy.transform, spawner, 100);
                 SystemManager.RegisterSystem(new EnemyShooter(shooter, predicate), enemyBind);

@@ -9,6 +9,8 @@ public readonly struct Asteroid
     private const int MinVertices = 5;
     private const int MaxVertices = 16;
     private const int InitialHealth = 4;
+    private const float HealthSizeProportion = 2.71f;
+
     private readonly IPositionSpawner spawner;
     private readonly int health;
     private readonly GameObject gameObject;
@@ -28,7 +30,7 @@ public readonly struct Asteroid
         this.spawner = spawner;
         this.health = health;
         NativeArray<Vector2> polygons =
-            RandomUtils.RandomConvexPolygon(Random.Range(MinVertices, MaxVertices), health / 2.71f);
+            RandomUtils.RandomConvexPolygon(Random.Range(MinVertices, MaxVertices), health / HealthSizeProportion);
         gameObject = ObjectUtils.CreatePolygonalObject("Asteroid", Layers.Asteroid,  polygons, 0.1f);
         gameObject.transform.position = position;
         AddComponents();
@@ -63,5 +65,14 @@ public readonly struct Asteroid
         /* Reallocator */
         SystemManager.RegisterSystem(new AsteroidReallocator(gameObject.transform, spawner), 
             new UnityEventBind(GameEvents.GameOver));
+
+        GameObject circleCollider = new GameObject("Circle Collider")
+        {
+            layer = Layers.SteeringAvoidance
+        };
+        CircleCollider2D collider = circleCollider.AddComponent<CircleCollider2D>();
+        collider.radius = health / HealthSizeProportion * RandomUtils.MaxVertexDisplacement + 0.5f;
+        circleCollider.transform.SetParent(gameObject.transform);
+        circleCollider.transform.localPosition = Vector3.zero;
     }
 }

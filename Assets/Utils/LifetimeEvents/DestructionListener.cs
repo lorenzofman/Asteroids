@@ -12,7 +12,6 @@ public class DestructionListener : MonoBehaviour
 
     private void OnDestroy()
     {
-        Debug.Log($"Destroying {gameObject.name}");
         callback.Invoke();
     }
 }

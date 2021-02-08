@@ -7,33 +7,46 @@ internal class EnemyDirectionController : ISystem
     private readonly Transform enemy;
     private readonly Transform player;
     private ISteeringBehaviour currentBehaviour;
+    private readonly ISteeringModifier obstacleAvoidance;
     
     public EnemyDirectionController(Transform enemy, Transform player)
     {
         this.enemy = enemy;
         this.player = player;
-        currentBehaviour = new Wander(enemy, 5.0f, 10.0f, Angle.FromDegrees(360.0f));
+        Wander();
+        obstacleAvoidance = new CollisionAvoidance(enemy, 1 << Layers.SteeringAvoidance, 20.0f, 90.0f);
     }
 
     public void Wander()
     {
-        currentBehaviour = new Wander(enemy, 5.0f, 10.0f, Angle.FromDegrees(360.0f));
+        if (currentBehaviour is Wander)
+        {
+            return;
+        }
+        currentBehaviour = new Wander(enemy, 1.0f, 4.0f, Angle.FromDegrees(180.0f));
     }
     
     public void Pursuit(float evaderSpeed)
     {
+        if (currentBehaviour is Pursuit)
+        {
+            return;
+        }
         currentBehaviour = new Pursuit(enemy, player, evaderSpeed);
     }
     
     public void Seek()
     {
+        if (currentBehaviour is Seek)
+        {
+            return;
+        }
         currentBehaviour = new Seek(enemy, player);
     }
-    
 
     public void OnUpdate()
     {
-        Vector2 dir = currentBehaviour.Force();
-        enemy.transform.up = dir;
+        Vector2 final = obstacleAvoidance.Modify(currentBehaviour.Force());
+        enemy.transform.up = final;
     }
 }

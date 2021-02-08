@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Atlas.RasterRendering.Internal;
+using GizmosHelper;
 using Unity.Collections;
 using UnityEngine;
 
@@ -19,11 +19,6 @@ public static class PolygonUtils
 
         CalculateIndices(points);
         
-        foreach (Vector3 vertex in Vertices)
-        {
-            GizmosFromAnywhere.DrawPersistent(() => Gizmos.DrawWireSphere(vertex, 0.1f));
-        }
-
         Mesh mesh = new Mesh
         {
             vertices = Vertices.ToArray(),

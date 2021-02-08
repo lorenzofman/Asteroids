@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Atlas.RasterRendering.Internal
+namespace GizmosHelper
 {
     /// <summary>
     /// Consumidor de Gizmos

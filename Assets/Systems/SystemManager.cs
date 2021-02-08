@@ -1,6 +1,5 @@
 ﻿using System;
 using Assets.AllyaExtension;
-using UnityEngine;
 
 namespace Systems
 {
@@ -12,7 +11,6 @@ namespace Systems
             /* Unsubscribe method when binding ends */
             bind?.Bind(() =>
             {
-                Debug.Log($"Unbinding {system.GetType()} system");
                 if (system is IDisposableSystem disposable)
                 {
                     disposable.OnStop();

@@ -5,11 +5,15 @@ public static class ObjectUtils
 {
     private static readonly Material Unlit = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
 
-    public static GameObject CreatePolygonalObject(string name, LayerMask layer, NativeSlice<Vector2> polygons, float width)
+    public static GameObject CreatePolygonalObject(string name, LayerMask layer, NativeSlice<Vector2> polygons, float width, bool createCollider = true)
     {
         Mesh mesh = PolygonUtils.CreateMesh(polygons, width);
         GameObject go = CreateObject(name, layer, mesh);
-        go.AddComponent<PolygonCollider2D>().SetPath(0, polygons.ToArray());
+        if (createCollider)
+        {
+            go.AddComponent<PolygonCollider2D>().SetPath(0, polygons.ToArray());
+        }
+
         go.layer = layer;
         return go;
     }

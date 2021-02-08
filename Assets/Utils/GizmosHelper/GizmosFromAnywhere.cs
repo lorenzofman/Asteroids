@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-namespace Atlas.RasterRendering.Internal
+namespace GizmosHelper
 {
     /// <summary>
     /// Renderize no Gizmos fora de um 'OnDrawGizmos'
@@ -27,6 +28,30 @@ namespace Atlas.RasterRendering.Internal
         internal static void DrawPersistent(Action action)
         {
             PersistentGizmos.Add(action);
+        }
+
+        public static void DrawLine(Vector3 a, Vector3 b)
+        {
+            QueuedActions.Enqueue(() =>
+            {
+                Gizmos.DrawLine(a, b);
+            });
+        }
+        
+        public static void Color(Color color)
+        {
+            QueuedActions.Enqueue(() =>
+            {
+                Gizmos.color = color;
+            });
+        }
+
+        public static void DrawCircle(Vector3 position, float radius)
+        {
+            QueuedActions.Enqueue(() =>
+            {
+                Gizmos.DrawSphere(position, radius);
+            }); 
         }
     }
 }
